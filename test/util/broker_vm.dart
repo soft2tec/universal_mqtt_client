@@ -7,6 +7,6 @@ Future<Process> startBroker(String config) async {
     workingDirectory: 'test',
     mode: ProcessStartMode.normal,
   );
-  await Future.delayed(Duration(milliseconds: 500));
+  await Future.delayed(Duration(milliseconds: 1000));
   return broker;
 }

@@ -6,7 +6,7 @@ void hybridMain(StreamChannel channel) async {
   final stream = channel.stream.asBroadcastStream();
   final broker = await startBroker(await stream.first);
 
-  await Future.delayed(Duration(milliseconds: 500));
+  await Future.delayed(Duration(milliseconds: 1000));
 
   channel.sink.add(null);
 
