@@ -33,7 +33,7 @@ jobs:
       - name: Setup mosquitto (Windows)
         if: contains(matrix.os, 'windows')
         run: |
-          echo "::add-path::$GITHUB_WORKSPACE/.github/third-party/mosquitto/windows/"
+          echo "::add-path::$env:GITHUB_WORKSPACE/.github/third-party/mosquitto/windows/"
       - name: Install dependencies
         run: pub get
       - name: Run tests
