@@ -16,7 +16,7 @@ void main() {
 
   setUpAll(() async {
     broker1 = await startBroker('vm/broker1.conf');
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(Duration(seconds: 1));
     final broker1URI = brokerTCP(1884);
     broker1Server1 = UniversalMqttClient(broker: broker1URI);
     await broker1Server1.connect();
