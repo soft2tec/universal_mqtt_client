@@ -17,9 +17,9 @@ jobs:
 
     steps:
       - name: Setup Dart
-        uses: renatoathaydes/setup-dart@master
+        uses: cedx/setup-dart@v2.1.0
         with:
-          dart-version: "2.8.2"
+          version: "2.8.2"
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Install dependencies
