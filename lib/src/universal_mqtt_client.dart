@@ -121,11 +121,9 @@ class UniversalMqttClient {
 
     _mqtt.onDisconnected = () async {
       _brokerStatus.add(UniversalMqttClientStatus.disconnected);
+      _subscriptions.forEach((topic, sink) => sink.add(null));
       if (autoReconnect) {
         if (_stopReconnect) return;
-        _subscriptions.forEach((topic, sink) {
-          sink.add(null);
-        });
         if (_lastConnectAttempt != null) {
           final diff = DateTime.now().difference(_lastConnectAttempt);
           if (diff.inMilliseconds < 3000) {
