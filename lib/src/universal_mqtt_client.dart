@@ -119,27 +119,27 @@ class UniversalMqttClient {
       _mqtt.useTransport(UniversalMqttTransport.wss);
     }
 
-    _mqtt.onDisconnected = autoReconnect
-        ? () async {
-            _brokerStatus.add(UniversalMqttClientStatus.disconnected);
-            if (_stopReconnect) return;
-            if (_lastConnectAttempt != null) {
-              final diff = DateTime.now().difference(_lastConnectAttempt);
-              if (diff.inMilliseconds < 3000) {
-                await Future.delayed(Duration(
-                  milliseconds: 3000 - diff.inMilliseconds,
-                ));
-              }
-            }
-            if (_mqtt.connectionStatus.state ==
-                    MqttConnectionState.disconnected &&
-                !_stopReconnect) {
-              await connect().catchError((err) {});
-            }
+    _mqtt.onDisconnected = () async {
+      _brokerStatus.add(UniversalMqttClientStatus.disconnected);
+      if (autoReconnect) {
+        if (_stopReconnect) return;
+        _subscriptions.forEach((topic, sink) {
+          sink.add(null);
+        });
+        if (_lastConnectAttempt != null) {
+          final diff = DateTime.now().difference(_lastConnectAttempt);
+          if (diff.inMilliseconds < 3000) {
+            await Future.delayed(Duration(
+              milliseconds: 3000 - diff.inMilliseconds,
+            ));
           }
-        : () {
-            _brokerStatus.add(UniversalMqttClientStatus.disconnected);
-          };
+        }
+        if (_mqtt.connectionStatus.state == MqttConnectionState.disconnected &&
+            !_stopReconnect) {
+          await connect().catchError((err) {});
+        }
+      }
+    };
   }
 
   /// Tries to connect to the specified broker. If the connection is successful the returned
@@ -252,6 +252,9 @@ class UniversalMqttClient {
 
   /// Returns a stream of messages from the specified topic as strings. The specified
   /// topic is automatically subscribed to.
+  ///
+  /// On disconnect from the broker a `null` message is emitted. If applicable the handling
+  /// is automatically resumed once a connection to the broker has been reestablishd.
   ///
   /// Cancelling the stream stops the mqtt subscription.
   Stream<String> handleString(String topic, MqttQos qos) {
