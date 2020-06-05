@@ -6,6 +6,15 @@ repository: https://github.com/soft2tec/universal_mqtt_client
 environment:
   sdk: ">=2.8.1 <3.0.0"
 
+dependencies:
+  meta: ^1.1.8
+  uuid: ^2.0.4
+  rxdart: ^0.23.1
+  mqtt_client:
+    git:
+      url: git://github.com/luca-rand/mqtt_client.git
+      ref: c2117f74b53d69ea2da15bc68aa35b8127005738
+
 dev_dependencies:
   pedantic: ^1.9.0
   test: ^1.14.4
