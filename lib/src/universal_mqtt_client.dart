@@ -207,11 +207,13 @@ class UniversalMqttClient {
       if (err.fatal) {
         _stopReconnect = true;
       }
+      _mqtt.disconnect();
       await _brokerStatus.firstWhere(
           (element) => element == UniversalMqttClientStatus.disconnected);
       _brokerStatus.addError(err);
       rethrow;
     } catch (err) {
+      _mqtt.disconnect();
       await _brokerStatus.firstWhere(
           (element) => element == UniversalMqttClientStatus.disconnected);
       _brokerStatus.addError(err);
