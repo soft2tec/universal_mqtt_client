@@ -1,7 +1,7 @@
 platforms: [vm, chrome, firefox]
 
 on_os:
-  mac-os:
+  mac_os:
     platforms: [vm, chrome, firefox, safari]
 
 override_platforms:
