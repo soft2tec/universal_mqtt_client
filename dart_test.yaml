@@ -1,4 +1,9 @@
-platforms: [vm, chrome]
+platforms: [vm, chrome, firefox]
+
+on_os:
+  mac-os:
+    platforms: [vm, chrome, firefox, safari]
+
 override_platforms:
   chrome:
     settings:
