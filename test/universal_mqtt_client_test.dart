@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
 import 'package:universal_mqtt_client/universal_mqtt_client.dart';
+import 'package:uuid/uuid.dart';
 
 import 'util/broker.dart';
 
@@ -359,6 +360,66 @@ void main() {
           e is UniversalMqttClientConnectException &&
           e.message == 'Connection timed out.')),
     );
+  });
+
+  test('publish & subscribe tcp', () async {
+    final id = Uuid().v4();
+    final client = UniversalMqttClient(
+      broker: broker1.tcp,
+      autoReconnect: false,
+    );
+    await client.connect();
+    final sender = UniversalMqttClient(
+      broker: broker1.tcp,
+      autoReconnect: false,
+    );
+    await sender.connect();
+
+    final test = expectLater(
+      client.handleString('$id/tcp', MqttQos.exactlyOnce),
+      emitsInOrder(['Hello', 'World', '', null]),
+    );
+
+    sender.publishString('$id/tcp', 'Hello', MqttQos.exactlyOnce);
+    sender.publishString('$id/tcp', 'World', MqttQos.exactlyOnce);
+    sender.publishString('$id/tcp', '', MqttQos.exactlyOnce);
+
+    await Future.delayed(Duration(milliseconds: 500));
+
+    client.disconnect();
+    sender.disconnect();
+
+    await test;
+  }, testOn: 'vm');
+
+  test('publish & subscribe ws', () async {
+    final id = Uuid().v4();
+    final client = UniversalMqttClient(
+      broker: broker1.ws,
+      autoReconnect: false,
+    );
+    await client.connect();
+    final sender = UniversalMqttClient(
+      broker: broker1.ws,
+      autoReconnect: false,
+    );
+    await sender.connect();
+
+    final test = expectLater(
+      client.handleString('$id/ws', MqttQos.exactlyOnce),
+      emitsInOrder(['Hello', 'World', '', null]),
+    );
+
+    sender.publishString('$id/ws', 'Hello', MqttQos.exactlyOnce);
+    sender.publishString('$id/ws', 'World', MqttQos.exactlyOnce);
+    sender.publishString('$id/ws', '', MqttQos.exactlyOnce);
+
+    await Future.delayed(Duration(milliseconds: 500));
+
+    client.disconnect();
+    sender.disconnect();
+
+    await test;
   });
 
   test('broker uri must have a scheme', () {
