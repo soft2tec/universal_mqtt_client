@@ -1,5 +1,9 @@
-platforms: [vm, chrome]
+platforms: [vm, chrome, firefox]
+
 override_platforms:
   chrome:
     settings:
       arguments: --no-sandbox
+  firefox:
+    settings:
+      arguments: -headless
