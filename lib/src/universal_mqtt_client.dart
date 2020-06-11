@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:universal_mqtt_client/src/topics.dart';
 
 import './mqtt_shared.dart';
 import 'mqtt_vm.dart' if (dart.library.html) 'mqtt_browser.dart';
@@ -194,11 +195,13 @@ class UniversalMqttClient {
       });
       _mqtt.updates.listen((messages) {
         messages.forEach((message) {
-          if (_subscriptions[message.topic] != null) {
-            final MqttPublishMessage publishMessage = message.payload;
-            _subscriptions[message.topic]
-                .add(publishMessage.payload.message.buffer.asUint8List());
-          }
+          final MqttPublishMessage publishMessage = message.payload;
+          final payload = publishMessage.payload.message.buffer.asUint8List();
+          _subscriptions.forEach((matcher, sink) {
+            if (isTopicMatch(matcher, message.topic)) {
+              sink.add(payload);
+            }
+          });
         });
       });
     } on UniversalMqttClientConnectException catch (err) {
@@ -228,6 +231,7 @@ class UniversalMqttClient {
   }
 
   void _createSubscription(String topic, MqttQos qos) {
+    assertValidTopic(topic);
     _subscriptions[topic] = BehaviorSubject<Uint8List>();
     _subscriptions[topic].doOnCancel(() {
       if (!_subscriptions[topic].hasListener) {
@@ -257,6 +261,39 @@ class UniversalMqttClient {
   /// is automatically resumed once a connection to the broker has been reestablishd.
   ///
   /// Cancelling the stream stops the mqtt subscription.
+  ///
+  /// ### Wildcards
+  ///
+  /// In addition to subscribing to specific topics, you can also make use of two wildcards
+  /// in subscriptions. `+` is the wildcard used to match a single level of hierarchy. For
+  /// example, for a topic of `a/b/c/d`, the following example subscriptions will match:
+  /// - `a/b/c/d`
+  /// - `+/b/c/d`
+  /// - `a/+/c/d`
+  /// - `a/+/+/d`
+  /// - `+/+/+/+`
+  ///
+  /// The following subscriptions will not match:
+  /// - `a/b/c`
+  /// - `b/+/c/d`
+  /// - `+/+/+`
+  ///
+  /// The second wildcard is # and is used to match all subsequent levels of hierarchy. With
+  /// a topic of "a/b/c/d", the following example subscriptions will match:
+  /// - `a/b/c/d`
+  /// - `#`
+  /// - `a/#`
+  /// - `a/b/#`
+  /// - `a/b/c/#`
+  /// - `+/b/c/#`
+  ///
+  /// Any topics that start with a `$` do not match a subscription of `#` or `+` because these
+  /// are reserved as system topics. If you want to observe a hierarchy of topics starting with
+  /// `$` (for example `$SYS`), you need to subscribe to them directly. (for example `$SYS/#` or
+  /// `$SYS/+`).
+  ///
+  /// Note that the wildcards must be only ever used on their own, so a subscription of "a/b+/c"
+  /// is not valid use of a wildcard. The # wildcard must only ever be used as the final character of a subscription.
   Stream<String> handleString(String topic, MqttQos qos) {
     return _handle(topic, qos)
         .map((data) => data == null ? null : String.fromCharCodes(data));
