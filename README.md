@@ -8,7 +8,7 @@ Flutter and Flutter Web).
 ## Features
 
 - Full support for MQTT 3.3.1
-- Support for MQTT over WebSocket on all Dart compile targets (including web
+- Support for MQTT over WebSocket on all Dart compile targets (including web)
 - Support for MQTT over TCP on mobile and desktop
 - Dart idiomatic API using promises and streams
 - Built in reconnect functionality
