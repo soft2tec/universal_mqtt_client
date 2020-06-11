@@ -422,6 +422,117 @@ void main() {
     await test;
   });
 
+  Future<void> wildcardTests(String id, UniversalMqttClient client) {
+    return Future.wait([
+      expectLater(
+        client.handleString('$id/a/b/c/d', MqttQos.exactlyOnce),
+        emitsInOrder(['Hello World', null]),
+      ),
+      expectLater(
+        client.handleString('$id/+/b/c/d', MqttQos.exactlyOnce),
+        emitsInOrder(['Hello World', null]),
+      ),
+      expectLater(
+        client.handleString('$id/a/+/c/d', MqttQos.exactlyOnce),
+        emitsInOrder(['Hello World', null]),
+      ),
+      expectLater(
+        client.handleString('$id/a/+/+/d', MqttQos.exactlyOnce),
+        emitsInOrder(['Hello World', null]),
+      ),
+      expectLater(
+        client.handleString('$id/+/+/+/+', MqttQos.exactlyOnce),
+        emitsInOrder(['Hello World', null]),
+      ),
+      expectLater(
+        client.handleString('$id/a/b/c', MqttQos.exactlyOnce),
+        emitsInOrder([null]),
+      ),
+      expectLater(
+        client.handleString('$id/b/+/c/d', MqttQos.exactlyOnce),
+        emitsInOrder([null]),
+      ),
+      expectLater(
+        client.handleString('$id/+/+/+', MqttQos.exactlyOnce),
+        emitsInOrder([null]),
+      ),
+      expectLater(
+        client.handleString('$id/+/+/+/+', MqttQos.exactlyOnce),
+        emitsInOrder(['Hello World', null]),
+      ),
+      expectLater(
+        client.handleString('$id/#', MqttQos.exactlyOnce),
+        emitsInOrder(['Hello World', null]),
+      ),
+      expectLater(
+        client.handleString('$id/a/#', MqttQos.exactlyOnce),
+        emitsInOrder(['Hello World', null]),
+      ),
+      expectLater(
+        client.handleString('$id/a/b/#', MqttQos.exactlyOnce),
+        emitsInOrder(['Hello World', null]),
+      ),
+      expectLater(
+        client.handleString('$id/a/b/c/#', MqttQos.exactlyOnce),
+        emitsInOrder(['Hello World', null]),
+      ),
+      expectLater(
+        client.handleString('$id/+/b/c/#', MqttQos.exactlyOnce),
+        emitsInOrder(['Hello World', null]),
+      ),
+    ]);
+  }
+
+  test('subscribe wildcards tcp', () async {
+    final id = Uuid().v4();
+    final client = UniversalMqttClient(
+      broker: broker1.tcp,
+      autoReconnect: false,
+    );
+    await client.connect();
+    final sender = UniversalMqttClient(
+      broker: broker1.tcp,
+      autoReconnect: false,
+    );
+    await sender.connect();
+
+    final tests = wildcardTests(id, client);
+
+    sender.publishString('$id/a/b/c/d', 'Hello World', MqttQos.exactlyOnce);
+
+    await Future.delayed(Duration(milliseconds: 500));
+
+    client.disconnect();
+    sender.disconnect();
+
+    await tests;
+  }, testOn: 'vm');
+
+  test('subscribe wildcards ws', () async {
+    final id = Uuid().v4();
+    final client = UniversalMqttClient(
+      broker: broker1.ws,
+      autoReconnect: false,
+    );
+    await client.connect();
+    final sender = UniversalMqttClient(
+      broker: broker1.ws,
+      autoReconnect: false,
+    );
+    await sender.connect();
+
+    final tests = wildcardTests(id, client);
+
+    sender.publishString('$id/a/b/c/d', 'Hello World', MqttQos.exactlyOnce);
+
+    await Future.delayed(Duration(milliseconds: 500));
+
+    client.disconnect();
+    sender.disconnect();
+
+    await tests;
+  });
+
   test('broker uri must have a scheme', () {
     expect(
       () => UniversalMqttClient(

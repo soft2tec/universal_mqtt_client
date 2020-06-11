@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:universal_mqtt_client/src/mqtt_shared.dart';
+import 'package:universal_mqtt_client/universal_mqtt_client.dart';
 
 void main() {
   test('universal mqtt client exception', () {
@@ -18,5 +18,11 @@ void main() {
     final message = 'hello world';
     final error = UniversalMqttClientError(message);
     expect(error.toString(), equals('UniversalMqttClientError: $message'));
+  });
+
+  test('invalid topic error', () {
+    final message = 'hello world';
+    final error = InvalidTopicError(message);
+    expect(error.toString(), equals('InvalidTopicError: $message'));
   });
 }
