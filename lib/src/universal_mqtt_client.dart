@@ -37,7 +37,7 @@ final _uuid = Uuid();
 ///   autoReconnect: true,
 ///   timeout: Duration(seconds: 2),
 /// );
-/// mqtt.brokerStatus.listen((message) => print("Status: $message");
+/// mqtt.status.listen((message) => print("Status: $message");
 /// await mqtt.connect();
 /// await mqtt.publishString("my/topic", "hello world", MqttQos.exactlyOnce);
 /// mqtt.handleString("my/other/topic").listen((message) => print("Received message: $message"));
