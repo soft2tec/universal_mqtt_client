@@ -258,7 +258,8 @@ class UniversalMqttClient {
   ///
   /// Cancelling the stream stops the mqtt subscription.
   Stream<String> handleString(String topic, MqttQos qos) {
-    return _handle(topic, qos).map((data) => String.fromCharCodes(data));
+    return _handle(topic, qos)
+        .map((data) => data == null ? null : String.fromCharCodes(data));
   }
 
   /// Publish a string message to the specified topic with the specified QOS.
