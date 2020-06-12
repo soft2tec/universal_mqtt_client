@@ -148,7 +148,7 @@ class UniversalMqttClient {
       _stopReconnect = false;
       _brokerStatus.add(UniversalMqttClientStatus.connecting);
       _lastConnectAttempt = DateTime.now();
-      await _mqtt.connect(_username, _password).catchError((e) {}).timeout(
+      await _mqtt.connect(_username, _password).catchError(print).timeout(
         timeout,
         onTimeout: () async {
           _mqtt.disconnect();

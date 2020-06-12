@@ -6,7 +6,7 @@ class RawUniversalMqttClient extends MqttServerClient {
   /// The [server] hostname to connect to
   /// The [clientIdentifier] to use to connect with
   RawUniversalMqttClient(String server, String clientIdentifier)
-      : super(server, clientIdentifier);
+      : super(server, clientIdentifier, maxConnectionAttempts: 1);
 
   void useTransport(UniversalMqttTransport transport) {
     switch (transport) {

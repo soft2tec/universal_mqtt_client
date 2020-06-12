@@ -11,9 +11,10 @@ dependencies:
   uuid: ^2.0.4
   rxdart: ^0.24.1
   mqtt_client:
+    # move to pub version once released
     git:
       url: git://github.com/shamblett/mqtt_client.git
-      ref: 58ae21f39dad1bc4511586dc63b9bd2ebe97f173
+      ref: a05b002b4d0aa9795f8a0f3e230e8a6e35cb0c43
 
 dev_dependencies:
   pedantic: ^1.9.0
