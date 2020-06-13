@@ -8,7 +8,7 @@ environment:
 
 dependencies:
   meta: ^1.1.8
-  uuid: ^2.0.4
+  uuid: ^2.1.0
   rxdart: ^0.24.1
   mqtt_client: ^7.2.1
 
