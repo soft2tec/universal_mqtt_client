@@ -83,7 +83,7 @@ class UniversalMqttClient {
   /// be thrown. The [Uri.port] must also be set as there is not default port. If this is
   /// not the case a [UniversalMqttClientError] will be thrown.
   ///
-  /// The [username] and [password] should be set to [null] if there is no authentication,
+  /// The [username] and [password] should be set to `null` if there is no authentication,
   /// otherwise they can be set to a [String].
   ///
   /// The [autoReconnect] flag can be set to enable automatic reconnection. The details of

@@ -36,6 +36,9 @@ jobs:
         if: contains(matrix.os, 'windows')
         run: |
           echo "::add-path::$env:GITHUB_WORKSPACE/.github/third-party/mosquitto/windows/"
+      - name: Format
+        if: contains(matrix.os, 'ubuntu')
+        run: dartfmt --set-exit-if-changed -w .
       - name: Install dependencies
         run: pub get
       - name: Run tests (unix)
@@ -44,12 +47,18 @@ jobs:
       - name: Run tests (windows)
         if: contains(matrix.os, 'macOS')
         run: pub run test -p vm,chrome
+      - name: Lint
+        if: contains(matrix.os, 'ubuntu')
+        run: dartanalyzer **/*.dart
+      - name: Build documentation
+        if: contains(matrix.os, 'ubuntu')
+        run: dartdoc
       - name: Dry run publish to pub.dev
         if: contains(matrix.os, 'ubuntu')
         run: pub lish --dry-run
-    # TODO(lucacasonato):  Auto publishing to pub.dev is blocked by https://github.com/dart-lang/pub/issues/2227. Instead we will dry run for now.
-    # - name: Publish to pub.dev
-    #   run: pub lish -f
+      # TODO(lucacasonato):  Auto publishing to pub.dev is blocked by https://github.com/dart-lang/pub/issues/2227. Instead we will dry run for now.
+      # - name: Publish to pub.dev
+      #   run: pub lish -f
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/') && contains(matrix.os, 'ubuntu')
         uses: actions/create-release@v1
