@@ -1,6 +1,6 @@
 # universal_mqtt_client
 
-[![Pub Version](https://img.shields.io/pub/v/universal_mqtt_client)](https://pub.dev/package/universal_mqtt_client)
+[![Pub Version](https://img.shields.io/pub/v/universal_mqtt_client)](https://pub.dev/packages/universal_mqtt_client)
 
 A MQTT client for Dart that works on any Dart supported compile target (including
 Flutter and Flutter Web).
