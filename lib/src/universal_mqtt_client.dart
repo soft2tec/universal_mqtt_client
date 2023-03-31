@@ -300,9 +300,10 @@ class UniversalMqttClient {
   }
 
   /// Publish a string message to the specified topic with the specified QOS.
-  void publishString(String topic, String value, MqttQos qos) {
+  void publishString(String topic, String value, MqttQos qos,
+      {bool retain = false}) {
     final builder = MqttClientPayloadBuilder();
     builder.addString(value);
-    _mqtt.publishMessage(topic, qos, builder.payload);
+    _mqtt.publishMessage(topic, qos, builder.payload, retain: retain);
   }
 }
